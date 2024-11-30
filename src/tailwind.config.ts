@@ -15,7 +15,12 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        "noto-sans": ['var(--font-noto-sans)'],
+      }
     },
   },
-  plugins: [],
+  plugins: [
+    require("@tailwindcss/typography")
+  ],
 } satisfies Config;
