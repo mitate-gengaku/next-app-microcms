@@ -16,3 +16,15 @@ export const getPosts = async (queries?: MicroCMSQueries) => {
   
   return posts
 }
+
+export const getPost = async (contentId: string, queries?: MicroCMSQueries) => {
+  const post = await client.getListDetail<IPost>({
+    endpoint: "posts",
+    contentId,
+    queries
+  })
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  
+  return post
+}
