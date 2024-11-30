@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme/provider";
 import { cn } from "@/utils/cn";
 import { Noto_Sans_JP } from "next/font/google";
 import { GeistSans } from "geist/font/sans";
+import ReactLenis from "lenis/react";
 
 interface Props {
   children: React.ReactNode;
@@ -31,11 +32,16 @@ const Layout = ({ children }: Props) => {
           enableSystem
           disableTransitionOnChange
         >
-          <Header />
-          <main>
-            {children}
-          </main>
-          <Footer />
+          <ReactLenis
+            root
+            options={{ lerp: 0.1, duration: 2 }}
+            >
+            <Header />
+            <main>
+              {children}
+            </main>
+            <Footer />
+          </ReactLenis>
         </ThemeProvider>
       </body>
     </html>

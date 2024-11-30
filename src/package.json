@@ -13,6 +13,7 @@
     "@medusajs/ui": "^4.0.1",
     "axios": "^1.7.8",
     "geist": "^1.3.1",
+    "lenis": "^1.1.17",
     "microcms-js-sdk": "^3.1.2",
     "next": "15.0.3",
     "next-themes": "^0.4.3",

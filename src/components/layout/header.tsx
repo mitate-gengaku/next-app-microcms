@@ -14,7 +14,7 @@ const ruwudu = Ruwudu({
 
 export const Header = () => {
   return (
-    <header className="w-full font-noto-sans absolute top-0">
+    <header className="w-full font-noto-sans absolute top-0 z-10">
       <div className="w-full h-20 px-8 md:w-4/5 mx-auto flex items-center gap-8">
         <h1 className={cn(
           "text-3xl leading-0 mr-auto",
