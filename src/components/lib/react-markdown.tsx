@@ -9,6 +9,9 @@ import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import { Toc } from "@/components/posts/toc";
+import { cn } from "@/utils/cn";
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter'
+import {vscDarkPlus} from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 interface Props {
   content: string; 
@@ -18,16 +21,17 @@ export const Markdown = ({ content }: Props) => {
   const contentRef = useRef<HTMLDivElement>(null);
   const [blocks, setBlocks] = useState<IBlock[]>([]);
   const [y, setY] = useState<number>(0)
-  const [current, setCurrent] = useState<number>(0);
-  
-  const lenis = useLenis(({ scroll }) => {
+  const [direction, setDirection] = useState<1 | -1 | 0>(0);
+
+  useLenis(({ scroll, direction }) => {
     setY(Math.ceil(scroll))
-  });
+    setDirection(direction)
+  })
 
   useEffect(() => {
     if (contentRef.current) {
       const headings = contentRef.current.querySelectorAll('h2');
-      let arrs: IBlock[] = []
+      const arrs: IBlock[] = []
 
       headings.forEach((heading, i) => {
         arrs.push({
@@ -40,28 +44,9 @@ export const Markdown = ({ content }: Props) => {
 
       setBlocks([ ...blocks, ...arrs ]);
     }
+  
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content]);
-
-  useEffect(() => {
-    const scroll = lenis?.scroll || 0;
-    const direction = lenis?.direction;
-
-    if (direction === 1) {
-      blocks.forEach((block, i) => {
-        if (scroll >= block.offsetTop) {
-          setCurrent(i)
-        }
-      })
-    } else if (direction === -1) {
-      blocks.forEach((block, i) => {
-        if (scroll < block.offsetTop) {
-          setCurrent(i - 1)
-        }
-      })
-    } else if (scroll === 0) {
-      setCurrent(0)
-    }
-  }, [y])
 
   return (
     <div
@@ -70,10 +55,31 @@ export const Markdown = ({ content }: Props) => {
       >
       <Toc
         blocks={blocks} 
-        current={current}
+        direction={direction}
         y={y}
         />
       <ReactMarkdown
+        components={{  
+          code(props) {
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const {children, className, node, ref, ...rest} = props
+            const match = /language-(\w+)/.exec(className || '')
+            return match ? (
+              <SyntaxHighlighter
+                {...rest}
+                PreTag="div"
+                language={match[1]}
+                style={vscDarkPlus}
+                >
+                {String(children).replace(/\n$/, '')}
+              </SyntaxHighlighter>
+            ) : (
+              <code {...rest} className={className}>
+                {children}
+              </code>
+            )
+          }
+        }}
         remarkPlugins={[
           remarkGfm,
           remarkBreaks,
@@ -82,7 +88,10 @@ export const Markdown = ({ content }: Props) => {
           rehypeSlug,
           rehypeRaw
         ]}
-        className={"prose prose-base lg:prose-xl dark:prose-invert max-w-none w-full md:w-8/12"}
+        className={cn(
+          "prose prose-base lg:prose-xl dark:prose-invert max-w-none w-full md:w-8/12 prose-pre:bg-transparent prose-pre:p-0 prose-pre:m-0 prose-code:bg-transparent prose-code:p-0 prose-code:m-0",
+          !blocks.length && "md:w-full"
+        )}
         >
         {content}
       </ReactMarkdown>

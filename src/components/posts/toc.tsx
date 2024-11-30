@@ -3,8 +3,33 @@
 import { IBlock } from "@/types/block"
 import { cn } from "@/utils/cn"
 import Link from "next/link"
+import { useEffect, useState } from "react"
 
-export const Toc = ({ blocks, current, y }: {blocks: IBlock[], current: number, y: number }) => {
+export const Toc = ({ blocks, y, direction }: {blocks: IBlock[], y: number, direction: number, }) => {
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (blocks.length === 1) {
+      setCurrent(0)
+      return;
+    }
+    const prev = blocks[current - 1] && blocks[current - 1]
+    const next = blocks[current + 1] && blocks[current + 1]
+
+    if (direction === 1) {
+      if (next && y > next.offsetTop) {
+        setCurrent(current + 1)
+      }
+    } else if (direction === -1) {
+      if (prev && y <= prev.offsetTop) {
+        setCurrent(current - 1);
+      }
+    }
+  
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [y]);
+
+  if (!blocks.length) return <></>
   return (
     <nav
       className="fixed hidden md:block md:min-w-36 lg:min-w-64 right-[calc(2rem+10%)] top-[196px]"

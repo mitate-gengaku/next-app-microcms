@@ -1,15 +1,15 @@
-import { ChevronLeft, ChevronRight, TriangleRightMini } from "@medusajs/icons";
+import { TriangleRightMini } from "@medusajs/icons";
 import Link from "next/link";
-import { Badge, Container } from "@medusajs/ui";
+import { Badge } from "@medusajs/ui";
 import { getPost } from "@/libs/client";
 import { Markdown } from "@/components/lib/react-markdown";
 
 const PostDetail = async ({
-  params
-}: {
-  params: { postId: string };
+    params
+  }: {
+    params: Promise<{ postId: string }>;
  }) => {
-  const postId = await params.postId
+  const postId = (await params).postId
   const post = await getPost(postId)
 
   return (
